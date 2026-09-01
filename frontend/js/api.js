@@ -2,9 +2,10 @@
  * Restaurant Orders - Reusable Fetch API Client Layer
  */
 
-const API_BASE_URL = window.location.origin.includes(":5500") || window.location.origin.includes(":3000") || window.location.origin.includes("127.0.0.1:5500")
-    ? "http://localhost:8000"
-    : "";
+const API_BASE_URL = window.__API_URL__ 
+    || (window.location.origin.includes(":5500") || window.location.origin.includes(":3000") || window.location.origin.includes("127.0.0.1:5500")
+        ? "http://localhost:8000"
+        : "");
 
 class ApiClient {
     constructor() {
