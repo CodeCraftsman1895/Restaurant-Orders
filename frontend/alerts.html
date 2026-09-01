@@ -1,1 +1,64 @@
-﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slow-Order Alerts - Restaurant Order Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/alerts.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="orders.html" class="nav-brand">
+                <span class="brand-icon">🍽️</span>
+                <span>Restaurant Orders</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="orders.html" class="nav-link">Orders</a></li>
+                <li><a href="menu.html" class="nav-link">Menu</a></li>
+                <li>
+                    <a href="alerts.html" class="nav-link active">
+                        Alerts
+                        <span id="nav-alert-badge" class="nav-badge">0</span>
+                    </a>
+                </li>
+                <li class="manager-only" style="display: none;">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </li>
+            </ul>
+            <div class="nav-user-section">
+                <div id="nav-user-info" class="nav-user-info"></div>
+                <button id="nav-logout-btn" class="btn btn-secondary btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Slow-Order Alerts</h1>
+                <p class="page-subtitle">Open orders exceeding standard preparation threshold requiring staff attention</p>
+            </div>
+            <div class="page-actions">
+                <button id="refresh-alerts-btn" class="btn btn-secondary">
+                    <span>↻</span> Refresh Alerts
+                </button>
+            </div>
+        </div>
+
+        <!-- Alerts Container -->
+        <div id="alerts-container" class="alerts-grid">
+            <!-- Dynamic Alert Cards -->
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/alerts.js"></script>
+</body>
+</html>

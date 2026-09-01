@@ -1,5 +1,7 @@
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.routers import auth, menu, orders, alerts, dashboard
 
@@ -32,3 +34,9 @@ app.include_router(dashboard.router, prefix=settings.API_V1_STR)
 def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "project": settings.PROJECT_NAME}
+
+
+# Mount Frontend Static Files
+frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
+if frontend_dir.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")

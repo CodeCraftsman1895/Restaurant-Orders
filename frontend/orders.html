@@ -1,1 +1,175 @@
-﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Queue - Restaurant Order Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/orders.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="orders.html" class="nav-brand">
+                <span class="brand-icon">🍽️</span>
+                <span>Restaurant Orders</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="orders.html" class="nav-link active">Orders</a></li>
+                <li><a href="menu.html" class="nav-link">Menu</a></li>
+                <li>
+                    <a href="alerts.html" class="nav-link">
+                        Alerts
+                        <span id="nav-alert-badge" class="nav-badge">0</span>
+                    </a>
+                </li>
+                <li class="manager-only" style="display: none;">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                </li>
+            </ul>
+            <div class="nav-user-section">
+                <div id="nav-user-info" class="nav-user-info"></div>
+                <button id="nav-logout-btn" class="btn btn-secondary btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Order Queue</h1>
+                <p class="page-subtitle">Server-side filtered dining room queue and active orders</p>
+            </div>
+            <div class="page-actions">
+                <button id="refresh-orders-btn" class="btn btn-secondary">
+                    <span>↻</span> Refresh
+                </button>
+                <button id="open-create-order-btn" class="btn btn-primary">
+                    <span>+</span> New Order
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar (Goal 6) -->
+        <div class="card filter-card">
+            <div class="filter-grid">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Search Table #</label>
+                    <input type="number" id="filter-table" class="form-control" placeholder="e.g. 5" min="1">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Status</label>
+                    <select id="filter-status" class="form-control">
+                        <option value="">All Active Statuses</option>
+                        <option value="placed">Placed</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="ready">Ready</option>
+                        <option value="served">Served</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Sort By</label>
+                    <select id="filter-sort-by" class="form-control">
+                        <option value="created_at">Placed Time (Newest First)</option>
+                        <option value="table_number">Table Number</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0; display: flex; align-items: flex-end;">
+                    <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; padding-bottom: 8px;">
+                        <input type="checkbox" id="filter-archived">
+                        <span>Include Archived</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Table / Queue View -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Table</th>
+                            <th>Status</th>
+                            <th>Primary Waiter</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Placed At</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="loading-spinner"></div>
+                                <p class="empty-state-text" style="margin-top: 10px;">Loading orders...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="pagination-bar">
+                <div id="pagination-info" class="pagination-info">Showing orders</div>
+                <div class="pagination-controls">
+                    <button id="prev-page-btn" class="btn btn-secondary btn-sm" disabled>&larr; Previous</button>
+                    <span id="page-indicator" class="page-indicator">Page 1</span>
+                    <button id="next-page-btn" class="btn btn-secondary btn-sm" disabled>Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Order Modal -->
+    <div id="create-order-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 680px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Order</h2>
+                <button class="modal-close" onclick="utils.closeModal('create-order-modal')">&times;</button>
+            </div>
+            <form id="create-order-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="new-order-table">Table Number *</label>
+                        <input type="number" id="new-order-table" class="form-control" placeholder="e.g. 12" min="1" required>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <label class="form-label" style="margin-bottom: 0;">Order Items</label>
+                            <button type="button" id="add-item-row-btn" class="btn btn-secondary btn-sm">+ Add Dish</button>
+                        </div>
+                        <div id="order-items-container" class="order-items-container">
+                            <!-- Dynamic Dish Rows -->
+                        </div>
+                    </div>
+
+                    <div class="order-total-preview">
+                        <span>Estimated Total:</span>
+                        <strong id="new-order-total-display">$0.00</strong>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="utils.closeModal('create-order-modal')">Cancel</button>
+                    <button type="submit" id="create-order-submit-btn" class="btn btn-primary">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/orders.js"></script>
+</body>
+</html>

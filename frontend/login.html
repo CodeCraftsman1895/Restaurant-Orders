@@ -1,1 +1,150 @@
-﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Restaurant Order Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .login-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 440px;
+            padding: 36px 32px;
+        }
+        .login-brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-brand .brand-icon {
+            font-size: 2.8rem;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .login-brand h1 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .login-brand p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        .demo-accounts {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .demo-accounts h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .demo-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .demo-btn {
+            font-size: 0.85rem;
+            padding: 7px 12px;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-brand">
+                <span class="brand-icon">🍽️</span>
+                <h1>Restaurant Orders</h1>
+                <p>Sign in to access your shift & manage orders</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="name@restaurant.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="demo-accounts">
+                <h3>Quick Demo Logins</h3>
+                <div class="demo-btn-group">
+                    <button type="button" class="btn btn-secondary demo-btn" onclick="fillAndLogin('manager@restaurant.com', 'manager123')">
+                        <span><strong>Sarah Manager</strong> (Manager)</span>
+                        <span class="badge badge-role-manager">Manager</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary demo-btn" onclick="fillAndLogin('alice@restaurant.com', 'waiter123')">
+                        <span><strong>Alice Johnson</strong> (Waiter)</span>
+                        <span class="badge badge-role-waiter">Waiter</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary demo-btn" onclick="fillAndLogin('bob@restaurant.com', 'waiter123')">
+                        <span><strong>Bob Smith</strong> (Waiter)</span>
+                        <span class="badge badge-role-waiter">Waiter</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("login-submit-btn");
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px;"></span> Signing in...`;
+
+            try {
+                await window.auth.login(email, password);
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = "Sign In";
+            }
+        });
+
+        async function fillAndLogin(email, password) {
+            document.getElementById("email").value = email;
+            document.getElementById("password").value = password;
+            const btn = document.getElementById("login-submit-btn");
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px;"></span> Signing in...`;
+            try {
+                await window.auth.login(email, password);
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = "Sign In";
+            }
+        }
+    </script>
+</body>
+</html>

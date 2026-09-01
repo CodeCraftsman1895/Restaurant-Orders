@@ -7,7 +7,7 @@ from app.core.permissions import PermissionChecker
 from app.models.user import User
 
 # Test router to verify dependency behavior on FastAPI endpoints
-test_router = APIRouter(prefix="/test-rbac")
+test_router = APIRouter(prefix="/api/test-rbac")
 
 
 @test_router.get("/manager-only")
@@ -22,9 +22,11 @@ def waiter_or_manager_endpoint(current_user: User = Depends(require_waiter_or_ma
 
 @pytest.fixture(scope="module")
 def rbac_client():
-    from app.main import app
-    app.include_router(test_router)
-    with TestClient(app) as client:
+    from app.routers import auth
+    test_app = FastAPI()
+    test_app.include_router(auth.router, prefix="/api")
+    test_app.include_router(test_router)
+    with TestClient(test_app) as client:
         yield client
 
 
@@ -55,7 +57,7 @@ def waiter_token(rbac_client: TestClient):
 def test_manager_access_manager_endpoint(rbac_client: TestClient, manager_token: str):
     """Manager should successfully access manager-protected routes."""
     response = rbac_client.get(
-        "/test-rbac/manager-only",
+        "/api/test-rbac/manager-only",
         headers={"Authorization": f"Bearer {manager_token}"}
     )
     assert response.status_code == 200
@@ -67,7 +69,7 @@ def test_manager_access_manager_endpoint(rbac_client: TestClient, manager_token:
 def test_waiter_rejected_from_manager_endpoint(rbac_client: TestClient, waiter_token: str):
     """Waiter must receive 403 Forbidden on manager-only routes."""
     response = rbac_client.get(
-        "/test-rbac/manager-only",
+        "/api/test-rbac/manager-only",
         headers={"Authorization": f"Bearer {waiter_token}"}
     )
     assert response.status_code == 403
@@ -77,7 +79,7 @@ def test_waiter_rejected_from_manager_endpoint(rbac_client: TestClient, waiter_t
 
 def test_unauthenticated_rejected_with_401(rbac_client: TestClient):
     """Unauthenticated requests must receive 401 Unauthorized (not 403)."""
-    response = rbac_client.get("/test-rbac/manager-only")
+    response = rbac_client.get("/api/test-rbac/manager-only")
     assert response.status_code == 401
     assert response.json()["detail"] == "Could not validate credentials"
 
@@ -89,7 +91,7 @@ def test_unauthenticated_rejected_with_401(rbac_client: TestClient):
 def test_waiter_access_waiter_endpoint(rbac_client: TestClient, waiter_token: str):
     """Waiter should successfully access staff-authorized routes."""
     response = rbac_client.get(
-        "/test-rbac/waiter-or-manager",
+        "/api/test-rbac/waiter-or-manager",
         headers={"Authorization": f"Bearer {waiter_token}"}
     )
     assert response.status_code == 200
@@ -100,7 +102,7 @@ def test_waiter_access_waiter_endpoint(rbac_client: TestClient, waiter_token: st
 def test_manager_access_waiter_endpoint(rbac_client: TestClient, manager_token: str):
     """Manager should also have access to staff-authorized routes."""
     response = rbac_client.get(
-        "/test-rbac/waiter-or-manager",
+        "/api/test-rbac/waiter-or-manager",
         headers={"Authorization": f"Bearer {manager_token}"}
     )
     assert response.status_code == 200
@@ -118,7 +120,7 @@ def test_authorization_bypass_via_headers_or_body_rejected(rbac_client: TestClie
     waiter JWT must still be rejected with 403 Forbidden.
     """
     response = rbac_client.get(
-        "/test-rbac/manager-only?role=manager",
+        "/api/test-rbac/manager-only?role=manager",
         headers={
             "Authorization": f"Bearer {waiter_token}",
             "X-User-Role": "manager",

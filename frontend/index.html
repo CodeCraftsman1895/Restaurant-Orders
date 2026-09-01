@@ -1,1 +1,32 @@
-﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Order Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+    <div style="text-align: center;">
+        <div class="loading-spinner" style="width: 40px; height: 40px; margin-bottom: 16px;"></div>
+        <p style="color: var(--text-muted); font-weight: 500;">Loading Restaurant Orders...</p>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = window.api.getToken();
+            const user = window.api.getCurrentUser();
+            if (!token || !user) {
+                window.location.href = "login.html";
+            } else if (user.role === "manager") {
+                window.location.href = "dashboard.html";
+            } else {
+                window.location.href = "orders.html";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,1 +1,148 @@
-﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - Restaurant Order Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <!-- Chart.js CDN for 14-day trends visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="orders.html" class="nav-brand">
+                <span class="brand-icon">🍽️</span>
+                <span>Restaurant Orders</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="orders.html" class="nav-link">Orders</a></li>
+                <li><a href="menu.html" class="nav-link">Menu</a></li>
+                <li>
+                    <a href="alerts.html" class="nav-link">
+                        Alerts
+                        <span id="nav-alert-badge" class="nav-badge">0</span>
+                    </a>
+                </li>
+                <li class="manager-only">
+                    <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                </li>
+            </ul>
+            <div class="nav-user-section">
+                <div id="nav-user-info" class="nav-user-info"></div>
+                <button id="nav-logout-btn" class="btn btn-secondary btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Manager Dashboard</h1>
+                <p class="page-subtitle">Real-time revenue metrics, dining room status, and 14-day historical trend</p>
+            </div>
+            <div class="page-actions">
+                <button id="refresh-dashboard-btn" class="btn btn-secondary">
+                    <span>↻</span> Refresh
+                </button>
+                <button id="export-csv-btn" class="btn btn-primary">
+                    <span>📥</span> Export Orders CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Headline KPI Stat Cards (Goal 8) -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Today's Revenue</span>
+                <div id="kpi-today-revenue" class="kpi-value" style="color: var(--success);">$0.00</div>
+                <span class="kpi-subtext">Served orders today (non-voided lines)</span>
+            </div>
+
+            <div class="kpi-card">
+                <span class="kpi-label">Active Open Orders</span>
+                <div id="kpi-open-orders" class="kpi-value" style="color: var(--primary);">0</div>
+                <span class="kpi-subtext">Placed, accepted, preparing, or ready</span>
+            </div>
+
+            <div class="kpi-card">
+                <span class="kpi-label">Orders Placed Today</span>
+                <div id="kpi-today-orders" class="kpi-value">0</div>
+                <span class="kpi-subtext">Total tables seated today</span>
+            </div>
+
+            <div class="kpi-card">
+                <span class="kpi-label">Orders Served Today</span>
+                <div id="kpi-today-served" class="kpi-value">0</div>
+                <span class="kpi-subtext">Completed dine-in tables</span>
+            </div>
+        </div>
+
+        <!-- 14-Day Served Orders & Revenue Chart (Goal 8) -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">14-Day Served Orders & Revenue History</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">Daily served volume and gross receipts over the last two weeks</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="fourteen-day-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Two Column Grid for Status & Waiter Breakdowns -->
+        <div class="dashboard-sections-grid">
+            <!-- Status Breakdown Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Orders by Status</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th style="text-align: right;">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="status-breakdown-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Waiter Breakdown Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Staff Activity & Revenue</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Waiter Name</th>
+                                <th>Orders</th>
+                                <th style="text-align: right;">Revenue Generated</th>
+                            </tr>
+                        </thead>
+                        <tbody id="waiter-breakdown-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
