@@ -21,6 +21,11 @@ from app.schemas.order import (
     OrderStatusUpdate,
 )
 from app.schemas.event import OrderEventResponse
+from app.schemas.alert import (
+    AlertBadgeResponse,
+    SlowOrderAlertResponse,
+    AcknowledgeAlertResponse,
+)
 
 __all__ = [
     "LoginRequest",
@@ -44,4 +49,7 @@ __all__ = [
     "AddNoteRequest",
     "OrderStatusUpdate",
     "OrderEventResponse",
+    "AlertBadgeResponse",
+    "SlowOrderAlertResponse",
+    "AcknowledgeAlertResponse",
 ]
