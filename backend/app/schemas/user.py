@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
@@ -27,6 +28,7 @@ class UserBrief(BaseModel):
     """
     id: uuid.UUID
     name: str
+    email: Optional[EmailStr] = None
     role: str
 
     model_config = ConfigDict(from_attributes=True)

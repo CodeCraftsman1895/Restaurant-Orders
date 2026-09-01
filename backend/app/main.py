@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.routers import auth, menu
+from app.routers import auth, menu, orders
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -23,6 +23,7 @@ if settings.CORS_ORIGINS:
 # Include Routers
 app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(menu.router, prefix=settings.API_V1_STR)
+app.include_router(orders.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/health", tags=["Health"])
