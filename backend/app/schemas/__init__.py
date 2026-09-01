@@ -26,6 +26,12 @@ from app.schemas.alert import (
     SlowOrderAlertResponse,
     AcknowledgeAlertResponse,
 )
+from app.schemas.dashboard import (
+    DashboardSummaryResponse,
+    StatusBreakdownItem,
+    WaiterBreakdownItem,
+    ChartDayData,
+)
 
 __all__ = [
     "LoginRequest",
@@ -52,4 +58,8 @@ __all__ = [
     "AlertBadgeResponse",
     "SlowOrderAlertResponse",
     "AcknowledgeAlertResponse",
+    "DashboardSummaryResponse",
+    "StatusBreakdownItem",
+    "WaiterBreakdownItem",
+    "ChartDayData",
 ]
